@@ -1,9 +1,29 @@
+import { notFound } from "next/navigation";
+
+export const dynamicParams = true; // allow next to try to fetch data again if the page is not availabel pre rendeered.default value is true
+//if made false , thenext try if the page is pre rendered and if not will throw a 404 page
+
+export async function generateStaticParams(){ //make next build the pages when project is building6
+    const res = await fetch("http://localhost:4000/tickets");
+    const tickets =await res.json();
+    return tickets.map((ticket)=> ({
+        id: ticket.id
+    }))
+      return res.json();
+
+}
+
 async function getTicket(id) {
   const res = await fetch("http://localhost:4000/tickets/" + id, {
     next: {
       revalidate: 60,
     },
   });
+
+  if(!res.ok){
+    notFound()
+  }
+
   return res.json();
 }
 
